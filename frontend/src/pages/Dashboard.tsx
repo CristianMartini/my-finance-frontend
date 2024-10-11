@@ -1,41 +1,48 @@
-// src/pages/Dashboard.tsx
-
 import React from 'react';
 import { Typography, Grid, Card, CardContent } from '@mui/material';
+import { useAuth } from '../contexts/AuthContext';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+
+const data = [
+  { name: 'Receitas', value: 4000 },
+  { name: 'Despesas', value: 2400 },
+];
+
+const COLORS = ['#0088FE', '#FF8042'];
 
 const Dashboard: React.FC = () => {
-  // Dados simulados, substituir por dados reais da API
-  const totalIncome = 5000;
-  const totalExpense = 2000;
-  const balance = totalIncome - totalExpense;
+  const { user } = useAuth();
 
   return (
     <div>
       <Typography variant="h4" gutterBottom>
-        Dashboard
+        Olá, {user?.name}
       </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={4}>
-          <Card sx={{ backgroundColor: '#e0f7fa' }}>
+        <Grid item xs={12} md={4}>
+          <Card>
             <CardContent>
-              <Typography variant="h6">Receitas</Typography>
-              <Typography variant="h5">R$ {totalIncome.toFixed(2)}</Typography>
+              <Typography variant="h6">Saldo Atual</Typography>
+              <Typography variant="h5">R$ 1600,00</Typography>
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} sm={4}>
-          <Card sx={{ backgroundColor: '#ffebee' }}>
+        {/* Adicione mais cartões conforme necessário */}
+        <Grid item xs={12} md={8}>
+          <Card>
             <CardContent>
-              <Typography variant="h6">Despesas</Typography>
-              <Typography variant="h5">R$ {totalExpense.toFixed(2)}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <Card sx={{ backgroundColor: '#e8f5e9' }}>
-            <CardContent>
-              <Typography variant="h6">Saldo</Typography>
-              <Typography variant="h5">R$ {balance.toFixed(2)}</Typography>
+              <Typography variant="h6">Resumo Financeiro</Typography>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+                    {data.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         </Grid>

@@ -33,7 +33,7 @@ const AppRoutes: React.FC = () => {
         }
       />
       <Route
-        path="/transactions/edit/:id"
+        path="/transactions/new"
         element={
           <ProtectedRoute>
             <EditTransaction />
