@@ -1,12 +1,18 @@
 // src/App.tsx
 
-// Remova esta linha:
-// import React from 'react';
 
+import { CssBaseline } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
 import AppRoutes from './routes';
+import theme from './theme';
 
 function App() {
-  return <AppRoutes />;
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AppRoutes />
+    </ThemeProvider>
+  );
 }
 
 export default App;

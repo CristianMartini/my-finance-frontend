@@ -10,6 +10,7 @@ interface AuthContextData {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  setUser: (user: User) => void;
 }
 
 interface User {
@@ -21,7 +22,7 @@ interface User {
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUserState] = useState<User | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,14 +32,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (token) {
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         try {
-          // Opcional: Obter dados do usuário a partir de um endpoint
-          // const response = await api.get('/auth/me');
-          // setUser(response.data.user);
-          // Para simplificação, vamos armazenar os dados no cookie
-          const userData = Cookies.get('user');
-          if (userData) {
-            setUser(JSON.parse(userData));
-          }
+          // Chame a API para obter os dados do usuário
+          const response = await api.get('/auth/me');
+          setUserState(response.data.user);
         } catch (error) {
           logout();
         }
@@ -54,10 +50,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { token, user } = response.data;
 
       Cookies.set('token', token);
-      Cookies.set('user', JSON.stringify(user));
+      setUserState(user);
 
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(user);
 
       navigate('/');
     } catch (error) {
@@ -67,13 +62,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     Cookies.remove('token');
-    Cookies.remove('user');
-    setUser(null);
+    setUserState(null);
     navigate('/login');
   };
 
+  const setUser = (user: User) => {
+    setUserState(user);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout, setUser }}>
       {children}
     </AuthContext.Provider>
   );
