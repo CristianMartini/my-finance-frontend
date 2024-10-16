@@ -1,22 +1,17 @@
 // src/pages/Transactions/NewTransaction.tsx
 
 import React, { useState } from 'react';
-import { Typography, Box, CircularProgress, Snackbar, Alert } from '@mui/material';
+import {
+  Typography,
+  Box,
+  CircularProgress,
+  Snackbar,
+  Alert,
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import TransactionForm from '../../components/TransactionForm';
-
-interface TransactionFormInputs {
-  description: string;
-  amount: number;
-  date: string;
-  category: 'income' | 'expense';
-  subCategory: string;
-  type: string;
-  source: string;
-  isParcelado: boolean;
-  parcelas?: number;
-  notes?: string;
-}
+import { TransactionFormInputs } from '../../types';
+import { SubmitHandler } from 'react-hook-form';
 
 const NewTransaction: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -24,18 +19,23 @@ const NewTransaction: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleSubmit = (data: TransactionFormInputs) => {
+  const handleSubmit: SubmitHandler<TransactionFormInputs> = (data) => {
     setLoading(true);
     setErrorMessage(null);
-    
+
     try {
       // Recuperar transações existentes do localStorage
-      const existingTransactions = JSON.parse(localStorage.getItem('transactions') || '[]');
-      
+      const existingTransactions = JSON.parse(
+        localStorage.getItem('transactions') || '[]'
+      );
+
       // Adicionar nova transação
-      const updatedTransactions = [...existingTransactions, { id: Date.now(), ...data }];
+      const updatedTransactions = [
+        ...existingTransactions,
+        { id: Date.now(), ...data },
+      ];
       localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
-      
+
       setSuccessMessage('Transação adicionada com sucesso!');
       setLoading(false);
       navigate('/transactions');
@@ -55,16 +55,18 @@ const NewTransaction: React.FC = () => {
           <CircularProgress />
         </Box>
       )}
-      {!loading && (
-        <TransactionForm onSubmit={handleSubmit} mode="add" />
-      )}
+      {!loading && <TransactionForm onSubmit={handleSubmit} mode="add" />}
       {/* Notificações de Sucesso */}
       <Snackbar
         open={!!successMessage}
         autoHideDuration={6000}
         onClose={() => setSuccessMessage(null)}
       >
-        <Alert onClose={() => setSuccessMessage(null)} severity="success" sx={{ width: '100%' }}>
+        <Alert
+          onClose={() => setSuccessMessage(null)}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
           {successMessage}
         </Alert>
       </Snackbar>
@@ -74,7 +76,11 @@ const NewTransaction: React.FC = () => {
         autoHideDuration={6000}
         onClose={() => setErrorMessage(null)}
       >
-        <Alert onClose={() => setErrorMessage(null)} severity="error" sx={{ width: '100%' }}>
+        <Alert
+          onClose={() => setErrorMessage(null)}
+          severity="error"
+          sx={{ width: '100%' }}
+        >
           {errorMessage}
         </Alert>
       </Snackbar>
