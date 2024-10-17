@@ -16,11 +16,7 @@ import {
 import { Edit, Delete } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import './styles.css';
-import { TransactionFormInputs } from '../../types';
-
-interface Transaction extends TransactionFormInputs {
-  id: number;
-}
+import { Transaction } from '../../types';
 
 interface TransactionTableProps {
   transactions: Transaction[];
@@ -61,7 +57,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
         <TableBody>
           {transactions.map((transaction) => (
             <TableRow
-              key={transaction.id}
+              key={transaction._id}
               hover
               sx={{
                 '&:nth-of-type(odd)': {

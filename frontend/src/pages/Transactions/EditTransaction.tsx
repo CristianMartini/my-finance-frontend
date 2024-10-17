@@ -12,6 +12,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import TransactionForm from '../../components/TransactionForm';
 import { TransactionFormInputs } from '../../types';
 import { SubmitHandler } from 'react-hook-form';
+import api from '../../services/api';
 
 const EditTransaction: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,7 +26,7 @@ const EditTransaction: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchTransaction = () => {
+    const fetchTransaction = async () => {
       if (!id) {
         setErrorMessage('ID de transação inválido.');
         setLoading(false);
@@ -33,34 +34,24 @@ const EditTransaction: React.FC = () => {
       }
 
       try {
-        // Recuperar transações do localStorage
-        const existingTransactions = JSON.parse(
-          localStorage.getItem('transactions') || '[]'
-        );
+        const response = await api.get(`/transactions/${id}`);
+        const transaction = response.data;
 
-        // Encontrar a transação específica
-        const transactionToEdit = existingTransactions.find(
-          (t: any) => t.id === parseInt(id)
-        );
+        setInitialData({
+          description: transaction.description,
+          amount: transaction.amount,
+          date: transaction.date.slice(0, 10), // Ajustar formato da data
+          category: transaction.category,
+          subCategory: transaction.subCategory,
+          type: transaction.type,
+          source: transaction.source,
+          isParcelado: transaction.isParcelado,
+          parcelas: transaction.parcelas,
+          notes: transaction.notes,
+        });
 
-        if (transactionToEdit) {
-          setInitialData({
-            description: transactionToEdit.description,
-            amount: transactionToEdit.amount,
-            date: transactionToEdit.date,
-            category: transactionToEdit.category,
-            subCategory: transactionToEdit.subCategory,
-            type: transactionToEdit.type,
-            source: transactionToEdit.source,
-            isParcelado: transactionToEdit.isParcelado,
-            parcelas: transactionToEdit.parcelas,
-            notes: transactionToEdit.notes,
-          });
-        } else {
-          setErrorMessage('Transação não encontrada.');
-        }
         setLoading(false);
-      } catch (error) {
+      } catch (error: any) {
         setErrorMessage('Erro ao carregar transação.');
         setLoading(false);
       }
@@ -69,7 +60,7 @@ const EditTransaction: React.FC = () => {
     fetchTransaction();
   }, [id]);
 
-  const handleSubmit: SubmitHandler<TransactionFormInputs> = (data) => {
+  const handleSubmit: SubmitHandler<TransactionFormInputs> = async (data) => {
     if (!id) {
       setErrorMessage('ID de transação inválido.');
       return;
@@ -79,21 +70,12 @@ const EditTransaction: React.FC = () => {
     setErrorMessage(null);
 
     try {
-      // Recuperar transações existentes
-      const existingTransactions = JSON.parse(
-        localStorage.getItem('transactions') || '[]'
-      );
-
-      // Atualizar a transação específica
-      const updatedTransactions = existingTransactions.map((transaction: any) =>
-        transaction.id === parseInt(id) ? { ...transaction, ...data } : transaction
-      );
-      localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+      await api.put(`/transactions/${id}`, data);
 
       setSuccessMessage('Transação atualizada com sucesso!');
       setLoading(false);
       navigate('/transactions');
-    } catch (error) {
+    } catch (error: any) {
       setErrorMessage('Erro ao atualizar transação.');
       setLoading(false);
     }

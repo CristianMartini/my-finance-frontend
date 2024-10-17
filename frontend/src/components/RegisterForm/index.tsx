@@ -1,3 +1,4 @@
+//frontend\src\components\RegisterForm\index.tsx
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { TextField, Button, Typography, Link, Box } from '@mui/material';

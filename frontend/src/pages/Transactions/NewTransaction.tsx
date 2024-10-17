@@ -12,6 +12,8 @@ import { useNavigate } from 'react-router-dom';
 import TransactionForm from '../../components/TransactionForm';
 import { TransactionFormInputs } from '../../types';
 import { SubmitHandler } from 'react-hook-form';
+import api from '../../services/api';
+
 
 const NewTransaction: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -19,31 +21,27 @@ const NewTransaction: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleSubmit: SubmitHandler<TransactionFormInputs> = (data) => {
+  const handleSubmit: SubmitHandler<TransactionFormInputs> = async (data) => {
     setLoading(true);
     setErrorMessage(null);
-
+  
     try {
-      // Recuperar transações existentes do localStorage
-      const existingTransactions = JSON.parse(
-        localStorage.getItem('transactions') || '[]'
-      );
-
-      // Adicionar nova transação
-      const updatedTransactions = [
-        ...existingTransactions,
-        { id: Date.now(), ...data },
-      ];
-      localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
-
+      // Enviar os dados para o backend
+      await api.post('/transactions', data);
+  
       setSuccessMessage('Transação adicionada com sucesso!');
       setLoading(false);
       navigate('/transactions');
-    } catch (error) {
-      setErrorMessage('Erro ao adicionar transação.');
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.error) {
+        setErrorMessage(error.response.data.error);
+      } else {
+        setErrorMessage('Erro ao adicionar transação.');
+      }
       setLoading(false);
     }
   };
+  
 
   return (
     <div>
