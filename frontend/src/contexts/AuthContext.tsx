@@ -1,5 +1,3 @@
-// src/contexts/AuthContext.tsx
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import api from '../services/api';
@@ -8,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 interface AuthContextData {
   user: User | null;
   isAuthenticated: boolean;
+  loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   setUser: (user: User) => void;
@@ -23,6 +22,7 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUserState] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,12 +32,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (token) {
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         try {
-          // Chame a API para obter os dados do usuário
           const response = await api.get('/auth/me');
           setUserState(response.data.user);
         } catch (error) {
-          logout();
+          logout(false);
+        } finally {
+          setLoading(false);
         }
+      } else {
+        setLoading(false);
       }
     };
 
@@ -60,10 +63,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const logout = () => {
+  const logout = (redirect: boolean = true) => {
     Cookies.remove('token');
     setUserState(null);
-    navigate('/login');
+    if (redirect) {
+      navigate('/login');
+    }
   };
 
   const setUser = (user: User) => {
@@ -71,7 +76,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout, setUser }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, loading, login, logout, setUser }}>
       {children}
     </AuthContext.Provider>
   );

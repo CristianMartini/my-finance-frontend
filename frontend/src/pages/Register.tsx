@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import RegisterForm from '../components/RegisterForm';
 import { Container } from '@mui/material';
+import api from '../services/api'; // Importação do api
 import './Register.css';
 
 interface RegisterFormInputs {
@@ -19,12 +19,15 @@ const Register: React.FC = () => {
   const handleRegister = async (data: RegisterFormInputs) => {
     try {
       // Chame a API de registro do backend
-      // Exemplo:
-      // await api.post('/auth/register', data);
+      await api.post('/auth/register', data);
       // Após o registro bem-sucedido, redirecione para a página de login
       navigate('/login');
-    } catch (error) {
-      setErrorMessage('Erro ao registrar. Tente novamente.');
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.error) {
+        setErrorMessage(error.response.data.error);
+      } else {
+        setErrorMessage('Erro ao registrar. Tente novamente.');
+      }
     }
   };
 
