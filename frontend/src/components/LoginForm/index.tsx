@@ -1,9 +1,9 @@
 //frontend\src\components\LoginForm\index.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { TextField, Button, Typography, Link, Box, IconButton, InputAdornment } from '@mui/material';
-import { Visibility, VisibilityOff, Google } from '@mui/icons-material';
-import './styles.css';
+import { Icon } from '@iconify/react'; // Usando Iconify para ícones
+import './styles.css'; // Estilos personalizados
 
 interface LoginFormInputs {
   email: string;
@@ -17,7 +17,7 @@ interface LoginFormProps {
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, errorMessage }) => {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>();
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmitForm: SubmitHandler<LoginFormInputs> = data => {
     onSubmit(data);
@@ -33,6 +33,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, errorMessage }) => {
         Bem-vindo
       </Typography>
       {errorMessage && <Typography color="error">{errorMessage}</Typography>}
+      
       <TextField
         margin="normal"
         fullWidth
@@ -42,7 +43,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, errorMessage }) => {
         {...register('email', { required: 'O email é obrigatório' })}
         error={!!errors.email}
         helperText={errors.email?.message}
+        size="small" // Tamanho mais compacto
       />
+      
       <TextField
         margin="normal"
         fullWidth
@@ -56,25 +59,29 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, errorMessage }) => {
           endAdornment: (
             <InputAdornment position="end">
               <IconButton onClick={handleClickShowPassword} edge="end">
-                {showPassword ? <VisibilityOff /> : <Visibility />}
+                {showPassword ? <Icon icon="mdi:eye-off" /> : <Icon icon="mdi:eye" />} {/* Ícones do Iconify */}
               </IconButton>
             </InputAdornment>
           ),
         }}
+        size="small" // Tamanho mais compacto
       />
+      
       <Button type="submit" fullWidth variant="contained" color="primary" className="submit-button">
         Entrar
       </Button>
+      
       <Button
         fullWidth
         variant="outlined"
-        startIcon={<Google />}
+        startIcon={<Icon icon="mdi:google" />} // Ícone do Google
         className="google-button"
         onClick={() => {/* Função para login com Google */}}
         sx={{ mt: 2 }}
       >
         Entrar com Google
       </Button>
+      
       <Box mt={2} textAlign="center">
         <Link href="/register" variant="body2">
           Não tem uma conta? Registre-se

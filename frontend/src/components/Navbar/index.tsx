@@ -1,17 +1,20 @@
-// src/components/Navbar/index.tsx
-
 import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  toggleDrawer: () => void;  // Recebe a função para abrir/fechar a Sidebar
+}
+
+const Navbar: React.FC<NavbarProps> = ({ toggleDrawer }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -37,6 +40,15 @@ const Navbar: React.FC = () => {
   return (
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Toolbar>
+        {/* Ícone de menu para abrir a Sidebar */}
+        <IconButton
+          edge="start"
+          color="inherit"
+          aria-label="menu"
+          onClick={toggleDrawer}  // Chama a função para alternar a Sidebar
+        >
+          <MenuIcon />
+        </IconButton>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           My Finance
         </Typography>

@@ -1,0 +1,49 @@
+/* Estilo para o formulário de registro */
+.register-form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background-color: rgba(255, 255, 255, 0.9); /* Transparência leve */
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); /* Sombra para impacto */
+    backdrop-filter: blur(10px); /* Vidro fosco */
+    transition: transform 0.3s ease; /* Animação de hover */
+}
+
+.register-form:hover {
+    transform: translateY(-5px); /* Eleva o card ao passar o mouse */
+}
+
+.register-form input {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+.register-form button {
+    background-color: #16A085; /* Cor primária */
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.register-form button:hover {
+    background-color: #138672; /* Cor mais escura no hover */
+    transform: scale(1.05); /* Leve expansão no hover */
+}
+
+.error-message {
+    color: #E67E22; /* Cor de alerta */
+    font-size: 0.9rem;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    .register-form {
+        padding: 20px;
+    }
+}

@@ -1,37 +1,50 @@
-// src/components/Sidebar/index.tsx
-
 import React from 'react';
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar,ListItemButton } from '@mui/material';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import PieChartIcon from '@mui/icons-material/PieChart';
-import SettingsIcon from '@mui/icons-material/Settings';
+import { Drawer, List, ListItem, ListItemText, ListItemButton, IconButton, Toolbar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useTheme, useMediaQuery } from '@mui/material';
+import { Icon } from '@iconify/react';  // Importa o Iconify
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  open: boolean;
+  toggleDrawer: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
-    { text: 'Transações', icon: <AccountBalanceWalletIcon />, path: '/transactions' },
-    { text: 'Relatórios', icon: <PieChartIcon />, path: '/reports' },
-    { text: 'Configurações', icon: <SettingsIcon />, path: '/settings' },
+    { text: 'Dashboard', icon: 'mdi:monitor-dashboard', path: '/' }, // Icone de Dashboard do Iconify
+    { text: 'Transações', icon: 'mdi:cash-multiple', path: '/transactions' }, // Icone de Transações
+    { text: 'Relatórios', icon: 'mdi:chart-pie', path: '/reports' }, // Icone de Relatórios
+    { text: 'Configurações', icon: 'mdi:cog', path: '/settings' }, // Icone de Configurações
   ];
 
   return (
     <Drawer
-      variant="permanent"
+      anchor="left"
+      open={open}
+      onClose={toggleDrawer}
+      variant={isMobile ? 'temporary' : 'permanent'}
       sx={{
-        width: 240,
-        [`& .MuiDrawer-paper`]: { width: 240, boxSizing: 'border-box' },
+        width: isMobile ? 200 : 240,
+        [`& .MuiDrawer-paper`]: {
+          width: isMobile ? 200 : 240,
+          boxSizing: 'border-box',
+          boxShadow: '5px 0 15px rgba(0,0,0,0.1)',
+        },
       }}
     >
-      <Toolbar /> {/* Isso é para alinhar com a AppBar */}
+      <Toolbar /> {/* Isso alinha o Drawer com a AppBar */}
       <List>
         {menuItems.map((item, index) => (
           <ListItem key={index} disablePadding>
-            <ListItemButton onClick={() => navigate(item.path)}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemButton onClick={() => { navigate(item.path); toggleDrawer(); }}>
+              <IconButton>
+                {/* Ícone do Iconify */}
+                <Icon icon={item.icon} width={24} height={24} />
+              </IconButton>
               <ListItemText primary={item.text} />
             </ListItemButton>
           </ListItem>

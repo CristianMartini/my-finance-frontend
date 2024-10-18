@@ -45,9 +45,7 @@ const NewTransaction: React.FC = () => {
 
   return (
     <div>
-      <Typography variant="h4" gutterBottom>
-        Nova Transação
-      </Typography>
+     
       {loading && (
         <Box display="flex" justifyContent="center" mt={4}>
           <CircularProgress />

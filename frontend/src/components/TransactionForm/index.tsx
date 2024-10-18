@@ -1,5 +1,4 @@
 // src/components/TransactionForm/index.tsx
-
 import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import {
@@ -142,11 +141,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     <Box
       component="form"
       onSubmit={handleSubmit(onSubmit)}
-      className="transaction-form"
       noValidate
-      sx={{ mt: 3 }}
+      sx={{ mt: 4, maxWidth: 800, mx: 'auto', p: 3, backgroundColor: '#fafafa', borderRadius: 2, boxShadow: 3 }}
     >
-      <Typography variant="h5" component="h2" align="center" gutterBottom>
+      {/* Título da Página */}
+      <Typography variant="h4" component="h1" align="center" gutterBottom sx={{ mb: 4 }}>
         {mode === 'add' ? 'Nova Transação' : 'Editar Transação'}
       </Typography>
 
@@ -159,6 +158,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             {...register('description')}
             error={!!errors.description}
             helperText={errors.description?.message}
+            size="small"
           />
         </Grid>
 
@@ -171,6 +171,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             {...register('amount')}
             error={!!errors.amount}
             helperText={errors.amount?.message}
+            size="small"
           />
         </Grid>
 
@@ -184,12 +185,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             {...register('date')}
             error={!!errors.date}
             helperText={errors.date?.message}
+            size="small"
           />
         </Grid>
 
         {/* Categoria */}
         <Grid item xs={12} sm={6}>
-          <FormControl fullWidth error={!!errors.category}>
+          <FormControl fullWidth error={!!errors.category} size="small">
             <InputLabel id="category-label">Categoria</InputLabel>
             <Controller
               name="category"
@@ -211,7 +213,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
         {/* Subcategoria */}
         <Grid item xs={12} sm={6}>
-          <FormControl fullWidth error={!!errors.subCategory} disabled={!category}>
+          <FormControl fullWidth error={!!errors.subCategory} disabled={!category} size="small">
             <InputLabel id="subCategory-label">Subcategoria</InputLabel>
             <Controller
               name="subCategory"
@@ -236,7 +238,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
         {/* Tipo */}
         <Grid item xs={12} sm={6}>
-          <FormControl fullWidth error={!!errors.type} disabled={!subCategory}>
+          <FormControl fullWidth error={!!errors.type} disabled={!subCategory} size="small">
             <InputLabel id="type-label">Tipo</InputLabel>
             <Controller
               name="type"
@@ -261,7 +263,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
         {/* Fonte do Recurso */}
         <Grid item xs={12} sm={6}>
-          <FormControl fullWidth error={!!errors.source}>
+          <FormControl fullWidth error={!!errors.source} size="small">
             <InputLabel id="source-label">Fonte do Recurso</InputLabel>
             <Controller
               name="source"
@@ -314,6 +316,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               {...register('parcelas')}
               error={!!errors.parcelas}
               helperText={errors.parcelas?.message}
+              size="small"
             />
           </Grid>
         )}
@@ -326,6 +329,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             multiline
             rows={3}
             {...register('notes')}
+            size="small"
           />
         </Grid>
       </Grid>
@@ -352,7 +356,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       </Dialog>
 
       {/* Botões */}
-      <Box mt={3} display="flex" justifyContent="space-between">
+      <Box mt={4} display="flex" justifyContent="space-between">
         <Button variant="outlined" onClick={() => navigate(-1)}>
           Cancelar
         </Button>

@@ -1,23 +1,50 @@
-.login-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background-color: #f5f5f5;
-  }
-  
-  .login-container {
-    width: 100%;
-    max-width: 500px;
-    padding: 20px;
-  }
-  .login-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background-image: url('/assets/background.jpg');
-    background-size: cover;
-    background-position: center;
-  }
-  
+ /*  frontend\src\pages\Login.css*/
+ .login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-image: url('/assets/background.jpg'); /* Imagem de fundo */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.login-card {
+  background-color: rgba(255, 255, 255, 0.9); /* Transparência leve para o card */
+  backdrop-filter: blur(12px); /* Vidro fosco mais intenso */
+  border-radius: 16px; /* Arredondamento mais acentuado */
+  padding: 40px 30px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); /* Sombra para destaque */
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.login-title {
+  font-size: 2rem; /* Tamanho maior para destacar o título */
+  margin-bottom: 20px;
+  color: #16A085; /* Cor primária */
+  font-family: 'Poppins', sans-serif; /* Nova tipografia */
+}
+
+.login-form input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.login-form button {
+  background-color: #16A085; /* Cor primária */
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-form .MuiIconButton-root:hover {
+  color: #16A085; /* Cor primária ao passar o mouse */
+}

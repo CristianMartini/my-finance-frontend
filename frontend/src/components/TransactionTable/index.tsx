@@ -1,5 +1,4 @@
-// src/components/TransactionTable/index.tsx
-
+//frontend\src\components\TransactionTable\index.tsx
 import React from 'react';
 import {
   Table,
@@ -12,10 +11,10 @@ import {
   IconButton,
   Typography,
   useMediaQuery,
+  Box,
 } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
-import './styles.css';
 import { Transaction } from '../../types';
 
 interface TransactionTableProps {
@@ -41,52 +40,88 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   }
 
   return (
-    <TableContainer component={Paper} className="transaction-table">
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Descrição</TableCell>
-            <TableCell>Valor</TableCell>
-            {!isMobile && <TableCell>Data</TableCell>}
-            {!isMobile && <TableCell>Categoria</TableCell>}
-            {!isMobile && <TableCell>Tipo</TableCell>}
-            {!isMobile && <TableCell>Fonte</TableCell>}
-            <TableCell align="center">Ações</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
+    <TableContainer component={Paper} className="transaction-table" sx={{ boxShadow: 3 }}>
+      {!isMobile ? (
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Descrição</TableCell>
+              <TableCell>Valor</TableCell>
+              <TableCell>Data</TableCell>
+              <TableCell>Categoria</TableCell>
+              <TableCell>Tipo</TableCell>
+              <TableCell>Fonte</TableCell>
+              <TableCell align="center">Ações</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {transactions.map((transaction) => (
+              <TableRow
+                key={transaction._id}
+                hover
+                sx={{
+                  '&:nth-of-type(odd)': {
+                    backgroundColor: '#f9f9f9',
+                  },
+                }}
+              >
+                <TableCell>{transaction.description}</TableCell>
+                <TableCell>
+                  <Typography
+                    color={transaction.category === 'income' ? 'success.main' : 'error.main'}
+                  >
+                    {transaction.category === 'income' ? '+' : '-'} R${' '}
+                    {transaction.amount.toFixed(2)}
+                  </Typography>
+                </TableCell>
+                <TableCell>{new Date(transaction.date).toLocaleDateString()}</TableCell>
+                <TableCell>{transaction.subCategory}</TableCell>
+                <TableCell>{transaction.type}</TableCell>
+                <TableCell>{transaction.source}</TableCell>
+                <TableCell align="center">
+                  <IconButton
+                    color="primary"
+                    onClick={() => onEdit(transaction)}
+                  >
+                    <Edit />
+                  </IconButton>
+                  <IconButton
+                    color="error"
+                    onClick={() => onDelete(transaction)}
+                  >
+                    <Delete />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <Box display="flex" flexDirection="column" gap={2}>
           {transactions.map((transaction) => (
-            <TableRow
+            <Paper
               key={transaction._id}
-              hover
-              sx={{
-                '&:nth-of-type(odd)': {
-                  backgroundColor: '#f9f9f9',
-                },
-              }}
+              elevation={2}
+              sx={{ p: 2, backgroundColor: '#f9f9f9' }}
             >
-              <TableCell>{transaction.description}</TableCell>
-              <TableCell>
+              <Box>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  {transaction.description}
+                </Typography>
                 <Typography
-                  color={
-                    transaction.category === 'income' ? 'success.main' : 'error.main'
-                  }
+                  color={transaction.category === 'income' ? 'success.main' : 'error.main'}
                 >
                   {transaction.category === 'income' ? '+' : '-'} R${' '}
                   {transaction.amount.toFixed(2)}
                 </Typography>
-              </TableCell>
-              {!isMobile && (
-                <>
-                  <TableCell>
-                    {new Date(transaction.date).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>{transaction.subCategory}</TableCell>
-                  <TableCell>{transaction.type}</TableCell>
-                  <TableCell>{transaction.source}</TableCell>
-                </>
-              )}
-              <TableCell align="center">
+                <Typography variant="body2">
+                  {new Date(transaction.date).toLocaleDateString()}
+                </Typography>
+                <Typography variant="body2">{transaction.subCategory}</Typography>
+                <Typography variant="body2">{transaction.type}</Typography>
+                <Typography variant="body2">{transaction.source}</Typography>
+              </Box>
+              <Box display="flex" justifyContent="flex-end" mt={1}>
                 <IconButton
                   color="primary"
                   onClick={() => onEdit(transaction)}
@@ -99,11 +134,11 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                 >
                   <Delete />
                 </IconButton>
-              </TableCell>
-            </TableRow>
+              </Box>
+            </Paper>
           ))}
-        </TableBody>
-      </Table>
+        </Box>
+      )}
     </TableContainer>
   );
 };

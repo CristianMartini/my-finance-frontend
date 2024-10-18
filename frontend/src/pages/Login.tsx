@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import LoginForm from '../components/LoginForm';
-import { Box, Container } from '@mui/material';
+import { Container, Paper, Typography } from '@mui/material';
 import './Login.css';
 
 interface LoginFormInputs {
@@ -24,7 +24,12 @@ const Login: React.FC = () => {
   return (
     <div className="login-page">
       <Container maxWidth="sm">
-        <LoginForm onSubmit={handleLogin} errorMessage={errorMessage} />
+        <Paper elevation={3} className="login-card">
+          <Typography variant="h4" className="login-title">
+            Entrar na sua conta
+          </Typography>
+          <LoginForm onSubmit={handleLogin} errorMessage={errorMessage} />
+        </Paper>
       </Container>
     </div>
   );

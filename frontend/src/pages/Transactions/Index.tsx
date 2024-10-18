@@ -1,5 +1,3 @@
-// src/pages/Transactions/Index.tsx
-
 import React, { useEffect, useState } from 'react';
 import {
   Typography,
@@ -12,12 +10,16 @@ import {
   DialogContentText,
   DialogActions,
   Alert,
+  Fab,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import TransactionTable from '../../components/TransactionTable';
 import TransactionFilters from '../../components/TransactionFilters';
 import { Transaction } from '../../types';
 import api from '../../services/api';
+import AddIcon from '@mui/icons-material/Add';
 
 const Transactions: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -28,6 +30,8 @@ const Transactions: React.FC = () => {
   const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
 
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     fetchTransactions();
@@ -92,13 +96,19 @@ const Transactions: React.FC = () => {
 
   return (
     <div>
-      <Typography variant="h4" gutterBottom>
-        Transações
-      </Typography>
-      <Box display="flex" justifyContent="flex-end" mb={2}>
-        <Button variant="contained" color="primary" onClick={() => navigate('/transactions/new')}>
-          Nova Transação
-        </Button>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <Typography variant="h4" gutterBottom>
+          Transações
+        </Typography>
+        {!isSmallScreen && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate('/transactions/new')}
+          >
+            Nova Transação
+          </Button>
+        )}
       </Box>
       <TransactionFilters onFilter={handleFilter} />
       {loading ? (
@@ -113,6 +123,16 @@ const Transactions: React.FC = () => {
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
+      )}
+      {isSmallScreen && (
+        <Fab
+          color="primary"
+          aria-label="add"
+          onClick={() => navigate('/transactions/new')}
+          style={{ position: 'fixed', bottom: 16, right: 16 }}
+        >
+          <AddIcon />
+        </Fab>
       )}
       {/* Diálogo de Confirmação de Exclusão */}
       <Dialog

@@ -1,4 +1,3 @@
-//frontend\src\components\RegisterForm\index.tsx
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { TextField, Button, Typography, Link, Box } from '@mui/material';
@@ -18,11 +17,11 @@ interface RegisterFormProps {
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, errorMessage }) => {
   const { register, handleSubmit, watch, formState: { errors } } = useForm<RegisterFormInputs>();
+  const password = watch('password');
+
   const onSubmitForm: SubmitHandler<RegisterFormInputs> = data => {
     onSubmit(data);
   };
-
-  const password = watch('password');
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmitForm)} className="register-form" noValidate>
@@ -30,6 +29,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, errorMessage }) =
         Criar Conta
       </Typography>
       {errorMessage && <Typography color="error">{errorMessage}</Typography>}
+
       <TextField
         margin="normal"
         fullWidth
@@ -39,6 +39,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, errorMessage }) =
         {...register('name', { required: 'O nome é obrigatório' })}
         error={!!errors.name}
         helperText={errors.name?.message}
+        size="small" /* Ajusta o tamanho dos campos */
       />
       <TextField
         margin="normal"
@@ -48,6 +49,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, errorMessage }) =
         {...register('email', { required: 'O email é obrigatório' })}
         error={!!errors.email}
         helperText={errors.email?.message}
+        size="small"
       />
       <TextField
         margin="normal"
@@ -58,6 +60,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, errorMessage }) =
         {...register('password', { required: 'A senha é obrigatória', minLength: { value: 6, message: 'A senha deve ter no mínimo 6 caracteres' } })}
         error={!!errors.password}
         helperText={errors.password?.message}
+        size="small"
       />
       <TextField
         margin="normal"
@@ -71,10 +74,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, errorMessage }) =
         })}
         error={!!errors.confirmPassword}
         helperText={errors.confirmPassword?.message}
+        size="small"
       />
+      
       <Button type="submit" fullWidth variant="contained" color="primary" className="submit-button">
         Registrar
       </Button>
+
       <Box mt={2} textAlign="center">
         <Link href="/login" variant="body2">
           Já tem uma conta? Faça login

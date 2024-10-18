@@ -1,10 +1,28 @@
 .register-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background-image: url('/assets/background.jpg');
-    background-size: cover;
-    background-position: center;
-  }
-  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-image: url('/assets/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.register-card {
+  background-color: rgba(255, 255, 255, 0.9); /* Vidro fosco leve */
+  backdrop-filter: blur(12px); /* Desfoque mais intenso */
+  border-radius: 16px; /* Bordas arredondadas */
+  padding: 40px 30px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); /* Sombra para impacto */
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.register-title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #16A085; /* Cor primária */
+  font-family: 'Poppins', sans-serif; /* Fonte mais moderna */
+}
