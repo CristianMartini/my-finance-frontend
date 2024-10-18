@@ -3,7 +3,6 @@
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
-  // Personalize seu tema aqui
   palette: {
     primary: {
       main: '#1976d2', // Azul padrão do Material-UI
@@ -11,6 +10,15 @@ const theme = createTheme({
     secondary: {
       main: '#dc004e', // Rosa padrão do Material-UI
     },
+    success: {
+      main: '#4caf50', // Verde para sucesso
+    },
+    error: {
+      main: '#f44336', // Vermelho para erros
+    },
+  },
+  typography: {
+    fontFamily: 'Roboto, sans-serif',
   },
 });
 

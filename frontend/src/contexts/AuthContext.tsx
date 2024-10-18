@@ -1,5 +1,3 @@
-// src/contexts/AuthContext.tsx
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import api from '../services/api';
@@ -8,8 +6,10 @@ import { useNavigate } from 'react-router-dom';
 interface AuthContextData {
   user: User | null;
   isAuthenticated: boolean;
+  loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  setUser: (user: User) => void;
 }
 
 interface User {
@@ -21,7 +21,8 @@ interface User {
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUserState] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,17 +32,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (token) {
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         try {
-          // Opcional: Obter dados do usuário a partir de um endpoint
-          // const response = await api.get('/auth/me');
-          // setUser(response.data.user);
-          // Para simplificação, vamos armazenar os dados no cookie
-          const userData = Cookies.get('user');
-          if (userData) {
-            setUser(JSON.parse(userData));
-          }
+          const response = await api.get('/auth/me');
+          setUserState(response.data.user);
         } catch (error) {
-          logout();
+          logout(false);
+        } finally {
+          setLoading(false);
         }
+      } else {
+        setLoading(false);
       }
     };
 
@@ -54,10 +53,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { token, user } = response.data;
 
       Cookies.set('token', token);
-      Cookies.set('user', JSON.stringify(user));
+      setUserState(user);
 
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(user);
 
       navigate('/');
     } catch (error) {
@@ -65,15 +63,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const logout = () => {
+  const logout = (redirect: boolean = true) => {
     Cookies.remove('token');
-    Cookies.remove('user');
-    setUser(null);
-    navigate('/login');
+    setUserState(null);
+    if (redirect) {
+      navigate('/login');
+    }
+  };
+
+  const setUser = (user: User) => {
+    setUserState(user);
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, loading, login, logout, setUser }}>
       {children}
     </AuthContext.Provider>
   );
