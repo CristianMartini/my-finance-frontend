@@ -37,6 +37,13 @@ const Navbar: React.FC<NavbarProps> = ({ toggleDrawer }) => {
     logout();
   };
 
+  // Extrair o primeiro nome do usuário
+  const getFirstName = (fullName: string) => {
+    const trimmedName = fullName.trim(); // Remove espaços desnecessários
+    const nameParts = trimmedName ? trimmedName.split(' ') : []; // Divide o nome por espaços
+    return nameParts[0] || 'Usuário'; // Retorna o primeiro nome ou "Usuário" como padrão
+  };
+
   return (
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Toolbar>
@@ -55,7 +62,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleDrawer }) => {
         {user && (
           <div>
             <Typography variant="subtitle1" component="span" sx={{ marginRight: 2 }}>
-              Olá, {user.name}
+              Olá, {getFirstName(user.name)} {/* Mostra apenas o primeiro nome */}
             </Typography>
             <IconButton
               size="large"
