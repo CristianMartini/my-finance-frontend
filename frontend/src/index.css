@@ -1,0 +1,57 @@
+/* CSS Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Definir altura e largura de html e body */
+  html, body {
+    height: 100%;
+    width: 100%;
+    font-family: 'Poppins', sans-serif; /* Usando a fonte definida no tema */
+    background-color: #F8F5F2; /* Cor de fundo padrão definida no tema */
+    line-height: 1.6;
+  }
+  
+  /* Links sem sublinhado */
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  /* Botões e inputs com padding e borda zero para consistência */
+  button, input, select, textarea {
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Padronizar tamanhos dos títulos */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    margin: 0 0 10px;
+    line-height: 1.2;
+  }
+  
+  /* Aplicar padding básico no body */
+  body {
+    padding: 10px;
+  }
+  
+  /* Estilos padrão para botões */
+  button {
+    background-color: #16A085; /* Cor primária */
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #138672; /* Cor mais escura no hover */
+  }
+  

@@ -30,7 +30,7 @@
   width: 100%;
   padding: 12px;
   border-radius: 8px; /* Aumentando o arredondamento dos campos */
-  border: 1px solid #ccc;
+
   font-size: 16px;
 }
 
@@ -57,7 +57,6 @@
 /* Botão de login com Google */
 .google-button {
   color: #444;
-  border-color: #ccc;
   font-size: 1rem;
 }
 
