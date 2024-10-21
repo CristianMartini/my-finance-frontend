@@ -1,3 +1,4 @@
+// src/components/TransactionForm/index.tsx
 import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import {
@@ -27,10 +28,7 @@ import { TransactionFormInputs } from '../../types';
 // Esquema de validação com Yup
 const schema = yup
   .object({
-    description: yup
-      .string()
-      .max(100, 'A descrição pode ter no máximo 100 caracteres') // Limite de caracteres
-      .required('A descrição é obrigatória'),
+    description: yup.string().required('A descrição é obrigatória'),
     amount: yup
       .number()
       .typeError('O valor deve ser um número')
@@ -57,7 +55,7 @@ const schema = yup
         then: (schema) => schema.required('Número de parcelas é obrigatório'),
         otherwise: (schema) => schema.notRequired(),
       }),
-    notes: yup.string().max(50, 'A nota pode ter no máximo 50 caracteres'), // Limite para a nota
+    notes: yup.string(),
   })
   .required();
 
@@ -161,7 +159,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             error={!!errors.description}
             helperText={errors.description?.message}
             size="small"
-            inputProps={{ maxLength: 100 }} // Limite de caracteres no campo
           />
         </Grid>
 
@@ -333,8 +330,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             rows={3}
             {...register('notes')}
             size="small"
-            inputProps={{ maxLength: 50 }} // Limitar o número de caracteres
-            helperText="Máximo de 50 caracteres"
           />
         </Grid>
       </Grid>

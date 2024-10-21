@@ -79,19 +79,31 @@ const Transactions: React.FC = () => {
   const handleFilter = (filters: any) => {
     let filtered = [...transactions];
 
+    // Filtro por tipo de transação
     if (filters.type && filters.type !== 'all') {
       filtered = filtered.filter((t) => t.category === filters.type);
     }
 
+    // Filtro por categoria
+    if (filters.category) {
+      filtered = filtered.filter((t) => t.subCategory === filters.category);
+    }
+
+    // Filtro por data de início
     if (filters.startDate) {
       filtered = filtered.filter((t) => new Date(t.date) >= new Date(filters.startDate));
     }
 
+    // Filtro por data de fim
     if (filters.endDate) {
       filtered = filtered.filter((t) => new Date(t.date) <= new Date(filters.endDate));
     }
 
     setFilteredTransactions(filtered);
+  };
+
+  const handleClearFilter = () => {
+    setFilteredTransactions(transactions); // Reseta para todas as transações
   };
 
   return (
@@ -110,7 +122,7 @@ const Transactions: React.FC = () => {
           </Button>
         )}
       </Box>
-      <TransactionFilters onFilter={handleFilter} />
+      <TransactionFilters onFilter={handleFilter} onClearFilter={handleClearFilter} />
       {loading ? (
         <Box display="flex" justifyContent="center" mt={4}>
           <CircularProgress />
