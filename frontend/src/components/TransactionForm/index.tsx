@@ -16,7 +16,11 @@ import {
   DialogContent,
   DialogActions,
   Grid,
+  IconButton,
+  Snackbar,
+  Alert,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
@@ -83,9 +87,12 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
   const [subCategories, setSubCategories] = useState<string[]>([]);
   const [types, setTypes] = useState<string[]>([]);
-  const [sources, setSources] = useState<string[]>([]); // Carregar fontes do backend
+  const [sources, setSources] = useState<any[]>([]);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [newSource, setNewSource] = useState<string>('');
+  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
+  const [sourceToDelete, setSourceToDelete] = useState<string | null>(null);
 
   const category = watch('category');
   const subCategory = watch('subCategory');
@@ -97,7 +104,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     if (category && categories[category]) {
       const categoryData = categories[category];
       setSubCategories(Object.keys(categoryData));
-      // Resetar subCategory e type quando a categoria muda
       setValue('subCategory', '');
       setValue('type', '');
       setTypes([]);
@@ -112,7 +118,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     if (category && subCategory && categories[category]?.[subCategory]) {
       const typesData = categories[category][subCategory];
       setTypes(Object.keys(typesData));
-      // Resetar type quando a subCategory muda
       setValue('type', '');
     } else {
       setTypes([]);
@@ -123,8 +128,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   useEffect(() => {
     const fetchSources = async () => {
       try {
-        const response = await api.get('/sources'); // Requisição ao backend para buscar as fontes
-        setSources(response.data.map((source: any) => source.name)); // Adaptar os dados recebidos
+        const response = await api.get('/sources');
+        setSources(response.data);
       } catch (error) {
         console.error('Erro ao carregar fontes:', error);
       }
@@ -132,19 +137,41 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     fetchSources();
   }, []);
 
-  // Adicionar nova fonte ao backend e atualizar a lista
+  // Adicionar nova fonte ao backend e atualizar a lista sem recarregar a página
   const addNewSource = async () => {
     if (newSource.trim() === '') return;
 
     try {
       const response = await api.post('/sources', { name: newSource.trim() });
-      setSources((prevSources) => [...prevSources, response.data.name]); // Atualiza a lista de fontes
-      setValue('source', response.data.name); // Selecionar a nova fonte
-      setNewSource('');
+      setSources((prevSources) => [...prevSources, response.data]);
+      setValue('source', response.data.name); // Mantém a nova fonte selecionada
+      setNewSource(''); // Limpa o campo de input
       setOpenDialog(false);
     } catch (error) {
       console.error('Erro ao adicionar nova fonte:', error);
     }
+  };
+
+  // Função para abrir o diálogo de confirmação de exclusão
+  const handleDeleteClick = (sourceId: string) => {
+    setSourceToDelete(sourceId);
+    setConfirmDialogOpen(true);
+  };
+
+  // Função para deletar uma fonte
+  const deleteSource = async () => {
+    if (!sourceToDelete) return;
+
+    try {
+      await api.delete(`/sources/${sourceToDelete}`);
+      setSources((prevSources) => prevSources.filter((src) => src._id !== sourceToDelete));
+      setSnackbarMessage('Fonte deletada com sucesso!');
+    } catch (error) {
+      console.error('Erro ao deletar fonte:', error);
+      setSnackbarMessage('Erro ao deletar a fonte.');
+    }
+    setConfirmDialogOpen(false);
+    setSourceToDelete(null);
   };
 
   return (
@@ -154,7 +181,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       noValidate
       sx={{ mt: 4, maxWidth: 800, mx: 'auto', p: 3, backgroundColor: '#fafafa', borderRadius: 2, boxShadow: 3 }}
     >
-      {/* Título da Página */}
       <Typography variant="h4" component="h1" align="center" gutterBottom sx={{ mb: 4 }}>
         {mode === 'add' ? 'Nova Transação' : 'Editar Transação'}
       </Typography>
@@ -291,10 +317,21 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                     }
                   }}
                 >
-                  <MenuItem value="conta_corrente">Conta Corrente</MenuItem>
                   {sources.map((src) => (
-                    <MenuItem key={src} value={src}>
-                      {src}
+                    <MenuItem key={src._id} value={src.name}>
+                      <Box display="flex" justifyContent="space-between" width="100%">
+                        {src.name}
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteClick(src._id);
+                          }}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Box>
                     </MenuItem>
                   ))}
                   <MenuItem value="add_new">+ Adicionar Nova Fonte</MenuItem>
@@ -365,6 +402,20 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         </DialogActions>
       </Dialog>
 
+      {/* Diálogo de confirmação de exclusão */}
+      <Dialog open={confirmDialogOpen} onClose={() => setConfirmDialogOpen(false)}>
+        <DialogTitle>Confirmar Exclusão</DialogTitle>
+        <DialogContent>
+          <Typography>Tem certeza de que deseja excluir esta fonte?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDialogOpen(false)}>Cancelar</Button>
+          <Button onClick={deleteSource} variant="contained" color="primary">
+            Excluir
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {/* Botões */}
       <Box mt={4} display="flex" justifyContent="space-between">
         <Button variant="outlined" onClick={() => navigate(-1)}>
@@ -374,6 +425,19 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           {mode === 'add' ? 'Adicionar' : 'Salvar'}
         </Button>
       </Box>
+
+      {/* Snackbar para feedback */}
+      {snackbarMessage && (
+        <Snackbar
+          open={!!snackbarMessage}
+          autoHideDuration={6000}
+          onClose={() => setSnackbarMessage(null)}
+        >
+          <Alert onClose={() => setSnackbarMessage(null)} severity="success">
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+      )}
     </Box>
   );
 };
