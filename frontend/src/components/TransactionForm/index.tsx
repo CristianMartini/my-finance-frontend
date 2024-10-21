@@ -1,4 +1,3 @@
-// src/components/TransactionForm/index.tsx
 import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import {
@@ -20,9 +19,9 @@ import {
 } from '@mui/material';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import './styles.css';
 import { useNavigate } from 'react-router-dom';
-import { categories } from '../../data/categories';
+import api from '../../services/api';
+import { categories } from '../../data/categories'; // Arquivo que contém as categorias, subcategorias e tipos
 import { TransactionFormInputs } from '../../types';
 
 // Esquema de validação com Yup
@@ -84,7 +83,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
   const [subCategories, setSubCategories] = useState<string[]>([]);
   const [types, setTypes] = useState<string[]>([]);
-  const [sources, setSources] = useState<string[]>([]);
+  const [sources, setSources] = useState<string[]>([]); // Carregar fontes do backend
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [newSource, setNewSource] = useState<string>('');
 
@@ -120,21 +119,32 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     }
   }, [category, subCategory, setValue]);
 
-  // Carregar fontes de recurso do localStorage
+  // Carregar fontes do backend no início
   useEffect(() => {
-    const storedSources = JSON.parse(localStorage.getItem('sources') || '[]');
-    setSources(storedSources);
+    const fetchSources = async () => {
+      try {
+        const response = await api.get('/sources'); // Requisição ao backend para buscar as fontes
+        setSources(response.data.map((source: any) => source.name)); // Adaptar os dados recebidos
+      } catch (error) {
+        console.error('Erro ao carregar fontes:', error);
+      }
+    };
+    fetchSources();
   }, []);
 
-  // Adicionar nova fonte ao localStorage e atualizar lista
-  const addNewSource = () => {
+  // Adicionar nova fonte ao backend e atualizar a lista
+  const addNewSource = async () => {
     if (newSource.trim() === '') return;
-    const updatedSources = [...sources, newSource.trim()];
-    setSources(updatedSources);
-    localStorage.setItem('sources', JSON.stringify(updatedSources));
-    setValue('source', newSource.trim());
-    setNewSource('');
-    setOpenDialog(false);
+
+    try {
+      const response = await api.post('/sources', { name: newSource.trim() });
+      setSources((prevSources) => [...prevSources, response.data.name]); // Atualiza a lista de fontes
+      setValue('source', response.data.name); // Selecionar a nova fonte
+      setNewSource('');
+      setOpenDialog(false);
+    } catch (error) {
+      console.error('Erro ao adicionar nova fonte:', error);
+    }
   };
 
   return (
@@ -277,10 +287,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                     if (event.target.value === 'add_new') {
                       setOpenDialog(true);
                     } else {
-                      field.onChange(event);
+                      field.onChange(event.target.value);
                     }
                   }}
                 >
+                  <MenuItem value="conta_corrente">Conta Corrente</MenuItem>
                   {sources.map((src) => (
                     <MenuItem key={src} value={src}>
                       {src}
@@ -306,7 +317,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           />
         </Grid>
 
-        {/* Número de Parcelas */}
         {isParcelado && (
           <Grid item xs={12} sm={6}>
             <TextField

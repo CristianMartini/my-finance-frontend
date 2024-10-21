@@ -1,8 +1,5 @@
-// src/pages/Transactions/EditTransaction.tsx
-
 import React, { useEffect, useState } from 'react';
 import {
-  Typography,
   Box,
   CircularProgress,
   Snackbar,
@@ -18,9 +15,7 @@ const EditTransaction: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const [initialData, setInitialData] = useState<TransactionFormInputs | null>(
-    null
-  );
+  const [initialData, setInitialData] = useState<TransactionFormInputs | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -44,7 +39,8 @@ const EditTransaction: React.FC = () => {
           category: transaction.category,
           subCategory: transaction.subCategory,
           type: transaction.type,
-          source: transaction.source,
+          // Verificar se `source` é um objeto ou string
+          source: typeof transaction.source === 'string' ? transaction.source : transaction.source.name, // Ajuste aqui
           isParcelado: transaction.isParcelado,
           parcelas: transaction.parcelas,
           notes: transaction.notes,
@@ -83,7 +79,6 @@ const EditTransaction: React.FC = () => {
 
   return (
     <div>
-     
       {loading && (
         <Box display="flex" justifyContent="center" mt={4}>
           <CircularProgress />
