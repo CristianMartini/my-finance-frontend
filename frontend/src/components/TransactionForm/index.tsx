@@ -33,10 +33,14 @@ const schema = yup
   .object({
     description: yup.string().required('A descrição é obrigatória'),
     amount: yup
-      .number()
-      .typeError('O valor deve ser um número')
-      .positive('O valor deve ser positivo')
-      .required('O valor é obrigatório'),
+    .number()
+    .typeError('O valor deve ser um número')
+    .positive('O valor deve ser positivo')
+    .max(1000000, 'O valor não pode exceder R$ 1.000.000,00')
+    .test('decimals', 'O valor pode ter no máximo 2 casas decimais', (value) => {
+      return /^\d+(\.\d{1,2})?$/.test(value?.toString() || ''); // Limita para 2 casas decimais
+    })
+    .required('O valor é obrigatório'),
     date: yup
       .string()
       .required('A data é obrigatória')
@@ -58,7 +62,9 @@ const schema = yup
         then: (schema) => schema.required('Número de parcelas é obrigatório'),
         otherwise: (schema) => schema.notRequired(),
       }),
-    notes: yup.string(),
+    notes: yup
+      .string()
+      .max(100, 'A nota deve ter no máximo 100 caracteres'),
   })
   .required();
 
@@ -173,6 +179,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     setConfirmDialogOpen(false);
     setSourceToDelete(null);
   };
+  const [noteLength, setNoteLength] = useState(0);
 
   return (
     <Box
@@ -207,7 +214,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             {...register('amount')}
             error={!!errors.amount}
             helperText={errors.amount?.message}
-            size="small"
+            inputProps={{ step: "0.01" }} // Define o step como 0.01 para limitar a 2 casas decimais
           />
         </Grid>
 
@@ -372,11 +379,15 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         <Grid item xs={12}>
           <TextField
             fullWidth
-            label="Notas (Opcional)"
-            multiline
-            rows={3}
+            label="Notas"
             {...register('notes')}
+            error={!!errors.notes}
+            helperText={`${noteLength}/100 caracteres`}
             size="small"
+            multiline
+            rows={4}
+            inputProps={{ maxLength: 100 }} // Limite de 255 caracteres
+            onChange={(e) => setNoteLength(e.target.value.length)} // Atualiza o contador
           />
         </Grid>
       </Grid>
