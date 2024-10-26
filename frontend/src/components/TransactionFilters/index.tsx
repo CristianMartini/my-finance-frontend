@@ -1,7 +1,9 @@
+// TransactionFilters.tsx
+
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, MenuItem, Button, Grid } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import ClearAllIcon from '@mui/icons-material/ClearAll'; // Ícone para o botão de limpar
+import ClearAllIcon from '@mui/icons-material/ClearAll';
 import './styles.css';
 import { categories } from '../../data/categories';
 
@@ -22,50 +24,85 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ onFilter, onCle
   const [category, setCategory] = useState<string>('');
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
+  const [selectedMonthIndex, setSelectedMonthIndex] = useState<number | null>(null);
   const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
+  const [initialized, setInitialized] = useState(false);
 
-  // Atualiza as opções de categoria de acordo com o tipo selecionado
+  const months = [
+    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  ];
+
+  useEffect(() => {
+    if (!initialized) {
+      const now = new Date();
+      const monthIndex = now.getMonth();
+      const firstDayOfMonth = new Date(now.getFullYear(), monthIndex, 1).toISOString().split('T')[0];
+      const lastDayOfMonth = new Date(now.getFullYear(), monthIndex + 1, 0).toISOString().split('T')[0];
+      setStartDate(firstDayOfMonth);
+      setEndDate(lastDayOfMonth);
+      setSelectedMonthIndex(monthIndex);
+      setInitialized(true);
+    }
+  }, [initialized]);
+
+  useEffect(() => {
+    if (startDate && endDate) {
+      onFilter({
+        type: type === 'all' ? undefined : type,
+        category: category || undefined,
+        startDate,
+        endDate,
+      });
+    }
+  }, [startDate, endDate, type, category, onFilter]);
+
   useEffect(() => {
     const categoryList: string[] = [];
-
     if (type === 'income' || type === 'all') {
-      Object.keys(categories.income).forEach((cat) => {
-        categoryList.push(cat);
-      });
+      Object.keys(categories.income).forEach((cat) => categoryList.push(cat));
     }
-
     if (type === 'expense' || type === 'all') {
-      Object.keys(categories.expense).forEach((cat) => {
-        categoryList.push(cat);
-      });
+      Object.keys(categories.expense).forEach((cat) => categoryList.push(cat));
     }
-
     setCategoryOptions(categoryList);
   }, [type]);
 
-  // Função para aplicar o filtro
-  const handleFilter = () => {
-    onFilter({
-      type: type === 'all' ? undefined : type,
-      category: category || undefined,
-      startDate: startDate || undefined,
-      endDate: endDate || undefined,
-    });
+  const handleMonthClick = (monthIndex: number) => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const firstDayOfMonth = new Date(year, monthIndex, 1).toISOString().split('T')[0];
+    const lastDayOfMonth = new Date(year, monthIndex + 1, 0).toISOString().split('T')[0];
+    setStartDate(firstDayOfMonth);
+    setEndDate(lastDayOfMonth);
+    setSelectedMonthIndex(monthIndex);
   };
 
-  // Função para resetar os filtros e limpar o estado
   const handleReset = () => {
+    const now = new Date();
+    const monthIndex = now.getMonth();
+    const firstDayOfMonth = new Date(now.getFullYear(), monthIndex, 1).toISOString().split('T')[0];
+    const lastDayOfMonth = new Date(now.getFullYear(), monthIndex + 1, 0).toISOString().split('T')[0];
+
     setType('all');
     setCategory('');
-    setStartDate('');
-    setEndDate('');
-    onClearFilter(); // Limpa o estado de filtragem
+    setStartDate(firstDayOfMonth);
+    setEndDate(lastDayOfMonth);
+    setSelectedMonthIndex(monthIndex);
+
+    onFilter({
+      type: 'all',
+      category: '',
+      startDate: firstDayOfMonth,
+      endDate: lastDayOfMonth,
+    });
+
+    onClearFilter();
   };
 
   return (
     <Box className="transaction-filters" mb={2}>
       <Grid container spacing={1} alignItems="center" justifyContent="center">
-        {/* Tipo de Transação */}
         <Grid item xs={12} sm={2}>
           <TextField
             select
@@ -81,7 +118,6 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ onFilter, onCle
           </TextField>
         </Grid>
 
-        {/* Categoria */}
         <Grid item xs={12} sm={3}>
           <TextField
             select
@@ -101,7 +137,6 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ onFilter, onCle
           </TextField>
         </Grid>
 
-        {/* Data Início */}
         <Grid item xs={12} sm={2}>
           <TextField
             label="Data Início"
@@ -116,7 +151,6 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ onFilter, onCle
           />
         </Grid>
 
-        {/* Data Fim */}
         <Grid item xs={12} sm={2}>
           <TextField
             label="Data Fim"
@@ -131,28 +165,44 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({ onFilter, onCle
           />
         </Grid>
 
-        {/* Botões */}
         <Grid item xs={12} sm={3} display="flex" justifyContent="space-between">
           <Button
-            variant="contained"
-            color="primary"
-            onClick={handleFilter}
-            startIcon={<SearchIcon />}
-            size="small"
-          >
-            Filtrar
-          </Button>
-          <Button
-            className="clear-filters" // Classe adicionada para o botão "Limpar Filtros"
             variant="outlined"
             onClick={handleReset}
             startIcon={<ClearAllIcon />}
             size="small"
+            sx={{
+              ':hover': {
+                backgroundColor: '#E67E22',
+                color: 'white', // Mantém o texto visível no hover
+              },
+              color: '#16A085', // Cor primária fora do hover
+            }}
           >
             Limpar Filtros
           </Button>
         </Grid>
       </Grid>
+
+      <Box display="flex" flexWrap="wrap" gap={1} mt={2} justifyContent="center">
+        {months.map((month, index) => (
+          <Button
+            key={index}
+            variant={selectedMonthIndex === index ? "contained" : "outlined"}
+            onClick={() => handleMonthClick(index)}
+            size="small"
+            sx={{
+              ':hover': {
+                backgroundColor: '#16A085', // Cor de fundo no hover
+                color: 'white', // Mantém o texto visível no hover
+              },
+              color: selectedMonthIndex === index ? 'white' : '#16A085', // Texto branco quando selecionado
+            }}
+          >
+            {month}
+          </Button>
+        ))}
+      </Box>
     </Box>
   );
 };

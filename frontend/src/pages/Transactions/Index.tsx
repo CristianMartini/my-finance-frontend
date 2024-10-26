@@ -14,6 +14,7 @@ import {
   Fab,
   useMediaQuery,
   useTheme,
+  Grid,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import TransactionTable from '../../components/TransactionTable';
@@ -37,6 +38,17 @@ const Transactions: React.FC = () => {
   useEffect(() => {
     fetchTransactions();
   }, []);
+
+  useEffect(() => {
+    if (transactions.length > 0) {
+      handleFilter({
+        type: 'all',
+        category: '',
+        startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0],
+        endDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0],
+      });
+    }
+  }, [transactions]);
 
   const fetchTransactions = async () => {
     try {
@@ -80,22 +92,18 @@ const Transactions: React.FC = () => {
   const handleFilter = (filters: any) => {
     let filtered = [...transactions];
 
-    // Filtro por tipo de transação
     if (filters.type && filters.type !== 'all') {
       filtered = filtered.filter((t) => t.category === filters.type);
     }
 
-    // Filtro por categoria
     if (filters.category) {
       filtered = filtered.filter((t) => t.subCategory === filters.category);
     }
 
-    // Filtro por data de início
     if (filters.startDate) {
       filtered = filtered.filter((t) => new Date(t.date) >= new Date(filters.startDate));
     }
 
-    // Filtro por data de fim
     if (filters.endDate) {
       filtered = filtered.filter((t) => new Date(t.date) <= new Date(filters.endDate));
     }
@@ -104,26 +112,69 @@ const Transactions: React.FC = () => {
   };
 
   const handleClearFilter = () => {
-    setFilteredTransactions(transactions); // Reseta para todas as transações
+    handleFilter({
+      type: 'all',
+      category: '',
+      startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0],
+      endDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0],
+    });
   };
 
   return (
-    <div>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h4" gutterBottom>
-          Transações
+    <Box sx={{ px: 2, pb: 4 }}>
+      <Box
+        sx={{
+          backgroundColor: '#16A085', // Usando a cor primária da paleta
+          color: 'white',
+          borderRadius: 2,
+          p: 4,
+          mb: 3,
+          boxShadow: 3,
+          textAlign: 'center',
+        }}
+      >
+        <Typography
+          variant="h2"
+          sx={{
+            fontWeight: 700,
+            textShadow: '2px 2px 5px rgba(0,0,0,0.3)',
+            mb: 1,
+          }}
+        >
+          Minhas Transações
         </Typography>
-        {!isSmallScreen && (
+        <Typography variant="h6" sx={{ opacity: 0.85 }}>
+          Gerencie suas receitas e despesas de forma prática
+        </Typography>
+      </Box>
+
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12} md={8}>
+          <TransactionFilters onFilter={handleFilter} onClearFilter={handleClearFilter} />
+        </Grid>
+        <Grid item xs={12} md={4} textAlign={isSmallScreen ? 'center' : 'right'}>
           <Button
             variant="contained"
-            color="primary"
+            size="large"
+            startIcon={<AddIcon />}
             onClick={() => navigate('/transactions/new')}
+            sx={{
+              backgroundColor: '#27AE60', // Cor de sucesso para destaque
+              boxShadow: '0px 4px 20px rgba(0,0,0,0.2)',
+              transition: 'transform 0.2s ease',
+              ':hover': {
+                backgroundColor: '#E67E22', // Usando a cor de atenção (coral) para hover
+                transform: 'scale(1.1)',
+                boxShadow: '0px 6px 25px rgba(0,0,0,0.3)',
+              },
+              color: 'white', // Mantém o texto branco no hover
+            }}
           >
             Nova Transação
           </Button>
-        )}
-      </Box>
-      <TransactionFilters onFilter={handleFilter} onClearFilter={handleClearFilter} />
+        </Grid>
+      </Grid>
+
       {loading ? (
         <Box display="flex" justifyContent="center" mt={4}>
           <CircularProgress />
@@ -137,21 +188,25 @@ const Transactions: React.FC = () => {
           onDelete={handleDelete}
         />
       )}
+
       {isSmallScreen && (
         <Fab
           color="primary"
           aria-label="add"
           onClick={() => navigate('/transactions/new')}
           style={{ position: 'fixed', bottom: 16, right: 16 }}
+          sx={{
+            backgroundColor: '#27AE60',
+            ':hover': {
+              backgroundColor: '#E67E22', // Coral no hover
+            },
+          }}
         >
           <AddIcon />
         </Fab>
       )}
-      {/* Diálogo de Confirmação de Exclusão */}
-      <Dialog
-        open={deleteDialogOpen}
-        onClose={() => setDeleteDialogOpen(false)}
-      >
+
+      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogTitle>Confirmar Exclusão</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -165,7 +220,7 @@ const Transactions: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Box>
   );
 };
 
