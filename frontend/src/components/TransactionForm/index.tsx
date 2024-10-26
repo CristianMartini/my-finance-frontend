@@ -33,14 +33,14 @@ const schema = yup
   .object({
     description: yup.string().required('A descrição é obrigatória'),
     amount: yup
-    .number()
-    .typeError('O valor deve ser um número')
-    .positive('O valor deve ser positivo')
-    .max(1000000, 'O valor não pode exceder R$ 1.000.000,00')
-    .test('decimals', 'O valor pode ter no máximo 2 casas decimais', (value) => {
-      return /^\d+(\.\d{1,2})?$/.test(value?.toString() || ''); // Limita para 2 casas decimais
-    })
-    .required('O valor é obrigatório'),
+      .number()
+      .typeError('O valor deve ser um número')
+      .positive('O valor deve ser positivo')
+      .max(1000000, 'O valor não pode exceder R$ 1.000.000,00')
+      .test('decimals', 'O valor pode ter no máximo 2 casas decimais', (value) => {
+        return /^\d+(\.\d{1,2})?$/.test(value?.toString() || ''); // Limita para 2 casas decimais
+      })
+      .required('O valor é obrigatório'),
     date: yup
       .string()
       .required('A data é obrigatória')
@@ -186,10 +186,43 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       component="form"
       onSubmit={handleSubmit(onSubmit)}
       noValidate
-      sx={{ mt: 4, maxWidth: 800, mx: 'auto', p: 3, backgroundColor: '#fafafa', borderRadius: 2, boxShadow: 3 }}
+
+      sx={{
+        mt: 4,
+        maxWidth: 800,
+        mx: 'auto',
+        p: 4,
+        backgroundColor: '#F8F5F2', // Cor suave para o fundo
+        borderRadius: 3,
+        boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.5)', // Sombra mais suave
+      }}
     >
-      <Typography variant="h4" component="h1" align="center" gutterBottom sx={{ mb: 4 }}>
-        {mode === 'add' ? 'Nova Transação' : 'Editar Transação'}
+      <Typography
+        variant="h3"
+        component="h1"
+        align="center"
+        gutterBottom
+        sx={{
+          mb: 2,
+          fontWeight: 800,
+          color: '#16A085',
+          textShadow: '2px 2px 6px rgba(0, 0, 0, 0.2)',
+        }}
+      >
+        {mode === 'add' ? 'Adicionar Nova Transação' : 'Editar Transação'}
+      </Typography>
+      <Typography
+        variant="subtitle1"
+        align="center"
+        sx={{
+          mb: 3,
+          color: '#7F8C8D',
+          opacity: 0.9,
+        }}
+      >
+        {mode === 'add'
+          ? 'Adicione uma nova transação para acompanhar suas finanças de forma simples e prática.'
+          : 'Edite os detalhes da sua transação e mantenha suas finanças organizadas.'}
       </Typography>
 
       <Grid container spacing={2}>
@@ -307,7 +340,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         {/* Fonte do Recurso */}
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth error={!!errors.source} size="small">
-            <InputLabel id="source-label">Fonte do Recurso</InputLabel>
+            <InputLabel id="source-label">Fonte do Recurso </InputLabel>
             <Controller
               name="source"
               control={control}
@@ -429,13 +462,34 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
       {/* Botões */}
       <Box mt={4} display="flex" justifyContent="space-between">
-        <Button variant="outlined" onClick={() => navigate(-1)}>
+        <Button
+          variant="outlined"
+          onClick={() => navigate(-1)}
+          sx={{
+            color: '#16A085',
+            borderColor: '#16A085',
+            ':hover': {
+              backgroundColor: '#E67E22',
+              color: 'white',
+            },
+          }}
+        >
           Cancelar
         </Button>
-        <Button type="submit" variant="contained" color="primary">
+        <Button
+          type="submit"
+          variant="contained"
+          sx={{
+            backgroundColor: '#27AE60',
+            ':hover': {
+              backgroundColor: '#E67E22',
+            },
+          }}
+        >
           {mode === 'add' ? 'Adicionar' : 'Salvar'}
         </Button>
       </Box>
+
 
       {/* Snackbar para feedback */}
       {snackbarMessage && (
