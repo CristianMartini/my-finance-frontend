@@ -1,8 +1,8 @@
 import React from 'react';
 import { Drawer, List, ListItem, ListItemText, ListItemButton, IconButton, Toolbar } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom'; // Importa useLocation para verificar a rota atual
 import { useTheme, useMediaQuery } from '@mui/material';
-import { Icon } from '@iconify/react';  // Importa o Iconify
+import { Icon } from '@iconify/react'; // Importa o Iconify
 
 interface SidebarProps {
   open: boolean;
@@ -11,14 +11,15 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
   const navigate = useNavigate();
+  const location = useLocation(); // Verifica a rota atual
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const menuItems = [
-    { text: 'Dashboard', icon: 'mdi:monitor-dashboard', path: '/' }, // Icone de Dashboard do Iconify
-    { text: 'Transações', icon: 'mdi:cash-multiple', path: '/transactions' }, // Icone de Transações
-    { text: 'Relatórios', icon: 'mdi:chart-pie', path: '/reports' }, // Icone de Relatórios
-    { text: 'Configurações', icon: 'mdi:cog', path: '/settings' }, // Icone de Configurações
+    { text: 'Dashboard', icon: 'mdi:monitor-dashboard', path: '/' }, // Ícone de Dashboard do Iconify
+    { text: 'Transações', icon: 'mdi:cash-multiple', path: '/transactions' }, // Ícone de Transações
+    { text: 'Relatórios', icon: 'mdi:chart-pie', path: '/reports' }, // Ícone de Relatórios
+    { text: 'Configurações', icon: 'mdi:cog', path: '/settings' }, // Ícone de Configurações
   ];
 
   return (
@@ -40,10 +41,20 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
       <List>
         {menuItems.map((item, index) => (
           <ListItem key={index} disablePadding>
-            <ListItemButton onClick={() => { navigate(item.path); toggleDrawer(); }}>
+            <ListItemButton
+              onClick={() => { navigate(item.path); toggleDrawer(); }}
+              sx={{
+                backgroundColor: location.pathname === item.path ? '#E67E22' : 'transparent', // Cor de fundo se estiver selecionado
+                color: location.pathname === item.path ? 'white' : 'inherit', // Cor do texto
+                ':hover': {
+                  backgroundColor: '#E67E22', // Cor de fundo ao passar o mouse
+                  color: 'white', // Cor do texto no hover
+                },
+              }}
+            >
               <IconButton>
                 {/* Ícone do Iconify */}
-                <Icon icon={item.icon} width={24} height={24} />
+                <Icon icon={item.icon} width={24} height={24} color={location.pathname === item.path ? 'white' : 'inherit'} />
               </IconButton>
               <ListItemText primary={item.text} />
             </ListItemButton>

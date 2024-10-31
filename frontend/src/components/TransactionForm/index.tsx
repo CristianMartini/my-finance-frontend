@@ -438,12 +438,38 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             onChange={(e) => setNewSource(e.target.value)}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>Cancelar</Button>
-          <Button onClick={addNewSource} variant="contained" color="primary">
-            Adicionar
-          </Button>
-        </DialogActions>
+        <DialogActions> 
+  <Button
+    onClick={() => setOpenDialog(false)}
+    sx={{
+      color: '#16A085', // Cor padrão do texto para o botão Cancelar
+      borderColor: '#16A085', // Cor da borda para o botão Cancelar
+      ':hover': {
+        backgroundColor: '#E67E22', // Cor de fundo ao passar o mouse no botão Cancelar
+        color: 'white', // Cor do texto ao passar o mouse no botão Cancelar
+      },
+    }}
+  >
+    Cancelar
+  </Button>
+  
+  <Button
+    onClick={addNewSource} 
+    variant="contained"
+    sx={{
+      backgroundColor: '#27AE60', // Cor de fundo padrão para o botão Adicionar
+      color: 'white', // Cor do texto padrão para manter o contraste
+      ':hover': {
+        backgroundColor: '#E67E22', // Cor de fundo ao passar o mouse
+        color: 'white', // Cor do texto ao passar o mouse
+      },
+    }}
+  >
+    Salvar
+  </Button>
+</DialogActions>
+
+
       </Dialog>
 
       {/* Diálogo de confirmação de exclusão */}
