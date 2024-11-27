@@ -24,7 +24,7 @@ const AppRoutes: React.FC = () => {
 
       {/* Rotas protegidas */}
       <Route
-        path="/dashboard"
+        path="/"
         element={
           <ProtectedRoute>
             <Dashboard />
