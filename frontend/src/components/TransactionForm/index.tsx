@@ -216,7 +216,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         align="center"
         sx={{
           mb: 3,
-          color: '#7F8C8D',
+          color: '#7F8C8',
           opacity: 0.9,
         }}
       >

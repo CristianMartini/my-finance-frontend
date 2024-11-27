@@ -17,8 +17,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
   const menuItems = [
     { text: 'Dashboard', icon: 'mdi:monitor-dashboard', path: '/' }, // Icone de Dashboard do Iconify
     { text: 'Transações', icon: 'mdi:cash-multiple', path: '/transactions' }, // Icone de Transações
-    { text: 'Relatórios', icon: 'mdi:chart-pie', path: '/reports' }, // Icone de Relatórios
-    { text: 'Configurações', icon: 'mdi:cog', path: '/settings' }, // Icone de Configurações
+   
   ];
 
   return (

@@ -31,6 +31,9 @@ import api from '../services/api';
 import { Transaction } from '../types';
 import TransactionFilters from '../components/TransactionFilters';
 import { categories } from '../data/categories';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
 const COLORS = ['#16A085', '#E67E22'];
 
@@ -41,6 +44,7 @@ const Dashboard: React.FC = () => {
   const [totalIncome, setTotalIncome] = useState<number>(0);
   const [totalExpense, setTotalExpense] = useState<number>(0);
   const [balance, setBalance] = useState<number>(0);
+  const navigate = useNavigate();
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -133,25 +137,50 @@ const Dashboard: React.FC = () => {
   return (
     <div>
     <Typography
-  variant={isSmallScreen ? 'h3' : 'h2'}
-  align="center"
-  gutterBottom
-  sx={{
-    mb: 4,
-    fontWeight: 800,
-    backgroundColor: '#16A085', // Fundo com a cor principal
-    color: 'white',
-    padding: '16px',
-    borderRadius: 2,
-    textShadow: '2px 2px 5px rgba(0, 0, 0, 0.2)',
-    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
-  }}
->
-  Olá, {user?.name}, bem-vindo ao seu painel financeiro!
-</Typography>
+      variant={isSmallScreen ? 'h3' : 'h2'}
+      align="center"
+      gutterBottom
+      sx={{
+        mb: 4,
+        fontWeight: 800,
+        backgroundColor: '#16A085',
+        color: 'white',
+        padding: '16px',
+        borderRadius: 2,
+        textShadow: '2px 2px 5px rgba(0, 0, 0, 0.2)',
+        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
+      }}
+    >
+      Olá, {user?.name}, bem-vindo ao seu painel financeiro!
+    </Typography>
 
-
-      <TransactionFilters onFilter={handleFilter} onClearFilter={handleClearFilter} />
+    
+    <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12} md={8}>
+          <TransactionFilters onFilter={handleFilter} onClearFilter={handleClearFilter} />
+        </Grid>
+        <Grid item xs={12} md={4} textAlign={isSmallScreen ? 'center' : 'right'}>
+          <Button
+            variant="contained"
+            size="large"
+            startIcon={<AddIcon />}
+            onClick={() => navigate('/transactions/new')}
+            sx={{
+              backgroundColor: '#27AE60', // Cor de sucesso para destaque
+              boxShadow: '0px 4px 20px rgba(0,0,0,0.2)',
+              transition: 'transform 0.2s ease',
+              ':hover': {
+                backgroundColor: '#E67E22', // Usando a cor de atenção (coral) para hover
+                transform: 'scale(1.1)',
+                boxShadow: '0px 6px 25px rgba(0,0,0,0.3)',
+              },
+              color: 'white', // Mantém o texto branco no hover
+            }}
+          >
+            Nova Transação
+          </Button>
+        </Grid>
+      </Grid>
 
       <Grid container spacing={3} mt={2}>
         {/* Saldo Atual e Últimas Transações */}

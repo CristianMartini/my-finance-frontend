@@ -1,3 +1,4 @@
+//frontend\src\contexts\AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import api from '../services/api';
