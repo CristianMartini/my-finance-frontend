@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      navigate('/');
+      navigate('/dashboard');
     } catch (error) {
       throw new Error('Credenciais inválidas');
     }

@@ -12,16 +12,19 @@ import Profile from '../pages/Profile';
 import ProtectedRoute from './ProtectedRoute';
 import { Typography } from '@mui/material';
 
+
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
       {/* Rotas públicas */}
+      {/* Rota inicial para a Landing Page */}
+     
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
       {/* Rotas protegidas */}
       <Route
-        path="/"
+        path="/dashboard"
         element={
           <ProtectedRoute>
             <Dashboard />
