@@ -17,7 +17,7 @@ const AppRoutes: React.FC = () => {
   return (
     <Routes>
       {/* Rotas públicas */}
-      {/* Rota inicial para a Landing Page */}
+    
      
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
